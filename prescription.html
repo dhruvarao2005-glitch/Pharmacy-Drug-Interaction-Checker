@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>New Prescription - Pharmacy Drug Interaction Checker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="app-container">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo-section">
+
+            <div class="logo-icon">
+                +
+            </div>
+
+            <div>
+
+                <h1>
+                    Pharmacy<br>
+                    Drug<br>
+                    Interaction<br>
+                    Checker
+                </h1>
+
+                <p>
+                    Safe Medication | Better Care<br>
+                    | Healthier Tomorrow
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-title">
+            PHARMACY
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="/">
+                🏠 Dashboard
+            </a>
+
+            <a href="/prescription"
+               class="active">
+                📋 New Prescription
+            </a>
+
+
+
+        </nav>
+
+    </aside>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <div class="page-header">
+
+            <div>
+
+                <h2>
+                    Patient & Prescription
+                </h2>
+
+                <p>
+                    Enter patient information and medicines
+                    to check drug interactions.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             PATIENT INFORMATION
+        ========================== -->
+
+        <section class="card">
+
+            <h3>
+                👤 Patient Information
+            </h3>
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Patient Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="patientName"
+                        placeholder="Enter patient name">
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        Age
+                    </label>
+
+                    <input
+                        type="number"
+                        id="patientAge"
+                        placeholder="Age">
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        Prescription Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="prescriptionNumber"
+                        value="RX00001">
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        Doctor Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="doctorName"
+                        placeholder="Enter doctor name">
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             ADD MEDICINE
+        ========================== -->
+
+        <section class="card">
+
+            <h3>
+                💊 Add Medicine
+            </h3>
+
+
+            <div class="form-grid">
+
+
+                <!-- MEDICINE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Medicine / Brand Name
+                    </label>
+
+
+                    <select id="medicineName">
+
+                        <option value="">
+                            -- Select Medicine --
+                        </option>
+
+                    </select>
+
+
+                    <!-- ACTIVE SALT -->
+
+                    <div id="saltInfo"
+                         style="
+                            margin-top: 10px;
+                            padding: 12px;
+                            background: #eef6ff;
+                            border: 1px solid #cfe0f7;
+                            border-radius: 7px;
+                            display: none;
+                         ">
+
+                        <strong>
+                            Active Salt(s):
+                        </strong>
+
+                        <div id="saltNames"></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- QUANTITY -->
+
+                <div class="form-group">
+
+                    <label>
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="quantity"
+                        placeholder="Quantity"
+                        min="1">
+
+                </div>
+
+
+
+                <!-- DOSAGE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Dosage
+                    </label>
+
+                    <input
+                        type="text"
+                        id="dosage"
+                        placeholder="e.g. Once Daily">
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ADD BUTTON -->
+
+            <button
+                class="button primary"
+                onclick="addMedicine()">
+
+                ➕ Add Medicine
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =========================
+             MEDICINE TABLE
+        ========================== -->
+
+        <section class="card">
+
+            <h3>
+                💊 Prescription Medicines
+            </h3>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                #
+                            </th>
+
+                            <th>
+                                Medicine
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Dosage
+                            </th>
+                            <th>
+                                price
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="medicineTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+
+            <!-- BUTTONS -->
+
+            <div class="button-row">
+
+    <button
+        class="button secondary"
+        onclick="clearPrescription()">
+
+        🗑 Clear
+
+    </button>
+
+
+    <button
+        class="button primary"
+        onclick="checkInteractions()">
+
+        🔍 Check Interactions
+
+    </button>
+
+
+    <button
+        id="billingButton"
+        class="button primary"
+        onclick="generateBill()"
+        disabled>
+
+        💳 Generate Bill
+
+    </button>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =========================
+     JAVASCRIPT
+========================== -->
+
+<script>
+
+
+/* =========================================
+   MEDICINE ARRAY
+========================================= */
+
+let medicines = [];
+let interactionFound = false;
+let saleAllowed = true;
+
+
+/* =========================================
+   LOAD MEDICINES FROM DATABASE
+========================================= */
+
+async function loadMedicines() {
+
+    try {
+
+        const response =
+            await fetch("/api/medicines");
+
+        const medicineList =
+            await response.json();
+
+
+        const select =
+            document.getElementById("medicineName");
+
+
+        medicineList.forEach(medicine => {
+
+            const option =
+                document.createElement("option");
+
+
+            option.value =
+                medicine.id;
+
+
+            option.textContent =
+                "💊 " + medicine.brand_name;
+
+
+            select.appendChild(option);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Error loading medicines:",
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   SHOW ACTIVE SALTS
+========================================= */
+
+document
+    .getElementById("medicineName")
+    .addEventListener(
+        "change",
+        showSaltInformation
+    );
+
+
+
+async function showSaltInformation() {
+
+    const medicineId =
+        document.getElementById(
+            "medicineName"
+        ).value;
+
+
+    const saltInfo =
+        document.getElementById(
+            "saltInfo"
+        );
+
+
+    const saltNames =
+        document.getElementById(
+            "saltNames"
+        );
+
+
+    if (!medicineId) {
+
+        saltInfo.style.display =
+            "none";
+
+        saltNames.innerHTML =
+            "";
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/medicine/" + medicineId
+            );
+
+
+        const medicine =
+            await response.json();
+
+
+        saltNames.innerHTML =
+            "";
+
+
+        const salts = [];
+
+
+        if (medicine.salt_1) {
+
+            salts.push(
+                medicine.salt_1
+            );
+
+        }
+
+
+        if (medicine.salt_2) {
+
+            salts.push(
+                medicine.salt_2
+            );
+
+        }
+
+
+        salts.forEach(salt => {
+
+            saltNames.innerHTML +=
+                `<div>• ${salt}</div>`;
+
+        });
+
+
+        saltInfo.style.display =
+            "block";
+
+
+    } catch (error) {
+
+        console.error(
+            "Error loading salt:",
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   ADD MEDICINE
+========================================= */
+
+async function addMedicine() {
+
+    const medicineSelect =
+        document.getElementById(
+            "medicineName"
+        );
+
+    const medicineId =
+        medicineSelect.value;
+
+    const selectedOption =
+        medicineSelect.options[
+            medicineSelect.selectedIndex
+        ];
+
+    if (medicineId === "") {
+
+        alert(
+            "Please select a medicine."
+        );
+
+        return;
+    }
+
+    const name =
+        selectedOption.textContent
+            .replace("💊 ", "")
+            .trim();
+
+    const quantity =
+        document.getElementById(
+            "quantity"
+        ).value;
+
+    const dosage =
+        document.getElementById(
+            "dosage"
+        ).value;
+
+
+    // Get complete medicine information including price
+    const response = await fetch(
+        "/api/medicine/" + medicineId
+    );
+
+    const medicine =
+        await response.json();
+
+
+    medicines.push({
+        id: medicineId,
+        name: name,
+        quantity: quantity,
+        dosage: dosage,
+        price: medicine.price
+    });
+
+
+    medicineSelect.value =
+        "";
+
+    document.getElementById(
+        "quantity"
+    ).value =
+        "";
+
+    document.getElementById(
+        "dosage"
+    ).value =
+        "";
+
+    document.getElementById(
+        "saltInfo"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "saltNames"
+    ).innerHTML =
+        "";
+
+    displayMedicines();
+}
+
+
+
+/* =========================================
+   DISPLAY MEDICINES
+========================================= */
+
+function displayMedicines() {
+
+    const tableBody =
+        document.getElementById(
+            "medicineTableBody"
+        );
+
+    tableBody.innerHTML =
+        "";
+
+    medicines.forEach(
+        (medicine, index) => {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+            row.innerHTML = `
+
+                <td>
+                    ${index + 1}
+                </td>
+
+                <td>
+                    ${medicine.name}
+                </td>
+
+                <td>
+                    ${medicine.quantity || "-"}
+                </td>
+
+                <td>
+                    ${medicine.dosage || "-"}
+                </td>
+
+                <td>
+                    ₹${Number(
+                        medicine.price || 0
+                    ).toFixed(2)}
+                </td>
+
+                <td>
+
+                    <button
+                        class="button danger"
+                        onclick="removeMedicine(${index})">
+
+                        ❌ Remove
+
+                    </button>
+
+                </td>
+
+            `;
+
+            tableBody.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================
+   REMOVE MEDICINE
+========================================= */
+
+function removeMedicine(index) {
+
+    medicines.splice(
+        index,
+        1
+    );
+
+
+    displayMedicines();
+
+}
+
+
+
+/* =========================================
+   CLEAR PRESCRIPTION
+========================================= */
+
+function clearPrescription() {
+
+
+    medicines = [];
+
+    interactionFound = false;
+    saleAllowed = true;
+
+
+    displayMedicines();
+
+
+    document.getElementById(
+        "patientName"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "patientAge"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "doctorName"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "prescriptionNumber"
+    ).value =
+        "RX00001";
+
+}
+
+
+
+/* =========================================
+   CHECK INTERACTIONS
+========================================= */
+
+async function checkInteractions() {
+
+    if (medicines.length < 2) {
+        alert("Please add at least two medicines.");
+        return;
+    }
+
+    try {
+
+        const medicineIds =
+            medicines.map(
+                medicine => medicine.id
+            );
+
+        const saltList = [];
+
+
+        for (const medicineId of medicineIds) {
+
+            const response =
+                await fetch(
+                    "/api/medicine/" + medicineId
+                );
+
+            const medicineData =
+                await response.json();
+
+
+            if (medicineData.salt_1) {
+                saltList.push(
+                    medicineData.salt_1
+                );
+            }
+
+            if (medicineData.salt_2) {
+                saltList.push(
+                    medicineData.salt_2
+                );
+            }
+        }
+
+
+        const interactionResponse =
+            await fetch(
+                "/api/check-prescription",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        salts: saltList
+                    })
+                }
+            );
+
+
+        const result =
+            await interactionResponse.json();
+        interactionFound =
+            result.interactions &&
+            result.interactions.length > 0;
+        saleAllowed =
+            result.sale_allowed !== false;
+
+
+        console.log(
+            "Interaction result:",
+            result
+        );
+
+
+        if (result.interactions.length === 0) {
+
+            document.getElementById(
+                "billingButton"
+            ).disabled = false;
+
+
+            alert(
+                "✅ No drug interactions found.\n\n" +
+                "Sale can proceed."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Save information for the
+         * pharmacist warning report.
+         */
+
+        const reportData = {
+
+            prescriptionNumber:
+                document.getElementById(
+                    "prescriptionNumber"
+                ).value.trim(),
+
+            patientName:
+                document.getElementById(
+                    "patientName"
+                ).value.trim(),
+
+            patientAge:
+                document.getElementById(
+                    "patientAge"
+                ).value.trim(),
+
+            doctorName:
+                document.getElementById(
+                    "doctorName"
+                ).value.trim(),
+
+            interactions:
+                result.interactions
+        };
+
+
+        sessionStorage.setItem(
+            "interactionReport",
+            JSON.stringify(reportData)
+        );
+        console.log(
+           "Saved bill data:",
+           JSON.parse(
+               sessionStorage.getItem("pharmacyBill")
+           )
+        );
+
+
+        if (result.sale_allowed === false) {
+
+    document.getElementById(
+        "billingButton"
+    ).disabled = true;
+
+    try {
+
+        await fetch("/api/save-sale", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+
+                prescriptionNumber:
+                    document.getElementById(
+                        "prescriptionNumber"
+                    ).value.trim(),
+
+                patientName:
+                    document.getElementById(
+                        "patientName"
+                    ).value.trim(),
+
+                totalAmount: 0,
+
+                interactionFound: 1,
+
+                saleAllowed: 0
+            })
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Error recording blocked sale:",
+            error
+        );
+    }
+
+    window.location.href = "/interaction-report";
+
+}
+
+        else {
+
+            document.getElementById(
+                "billingButton"
+            ).disabled = false;
+
+
+            alert(
+                "⚠️ Drug interaction found.\n\n" +
+                "Pharmacist review is required."
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Interaction check error:",
+            error
+        );
+
+        alert(
+            "Unable to check interactions. Please try again."
+        );
+    }
+}
+
+
+
+/* =========================================
+   START APPLICATION
+========================================= */
+
+loadMedicines();
+
+async function generateBill() {
+    if (!saleAllowed) {
+
+    alert(
+        "🚫 Sale blocked.\n\n" +
+        "A severe drug interaction was detected. " +
+        "Pharmacist review is required."
+    );
+
+    return;
+}
+
+    const patientName =
+        document.getElementById("patientName").value.trim();
+
+    const patientAge =
+        document.getElementById("patientAge").value.trim();
+
+    const doctorName =
+        document.getElementById("doctorName").value.trim();
+
+    const prescriptionNumber =
+        document.getElementById("prescriptionNumber").value.trim();
+
+    if (medicines.length === 0) {
+        alert("Please add at least one medicine.");
+        return;
+    }
+
+    if (patientName === "") {
+        alert("Please enter the patient name.");
+        return;
+    }
+    let totalAmount = 0;
+
+medicines.forEach(function (medicine) {
+
+    const quantity =
+        Number(medicine.quantity) || 0;
+
+    const price =
+        Number(medicine.price) || 0;
+
+    totalAmount +=
+        price * quantity;
+});
+console.log("Medicines being sent to bill:", medicines);
+
+    const billData = {
+        prescriptionNumber: prescriptionNumber,
+        patientName: patientName,
+        patientAge: patientAge,
+        doctorName: doctorName,
+        medicines: medicines,
+        totalAmount: totalAmount
+    };
+
+    sessionStorage.setItem(
+        "pharmacyBill",
+        JSON.stringify(billData)
+    );
+
+    try {
+
+        const response = await fetch(
+            "/api/save-sale",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    prescriptionNumber: prescriptionNumber,
+                    patientName: patientName,
+                    totalAmount: totalAmount,
+                    interactionFound: interactionFound ? 1 : 0,
+                    saleAllowed: 1
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            console.error("Save sale error:", result);
+            alert("Unable to save the sale.");
+            return;
+        }
+
+        console.log(
+            "Sale saved:",
+            result
+        );
+
+        window.location.href = "/bill";
+
+    } catch (error) {
+
+        console.error(
+            "Error saving sale:",
+            error
+        );
+
+        alert(
+            "Unable to save the sale. Please try again."
+        );
+    }
+}
+
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pharmacy Bill</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .bill-container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #2563eb;
+        }
+
+        .header p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .approved {
+            margin: 20px 0;
+            padding: 12px;
+            background: #e8f7ee;
+            color: #15803d;
+            border: 1px solid #86efac;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .info-box {
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        .actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            margin: 5px;
+        }
+
+        .print-button {
+            background: #2563eb;
+            color: white;
+        }
+
+        .back-button {
+            background: #64748b;
+            color: white;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .bill-container {
+                box-shadow: none;
+                max-width: none;
+            }
+
+            .actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="bill-container">
+
+    <div class="header">
+        <h1>🏥 PHARMACY BILL</h1>
+        <p>Pharmacy Drug Interaction Checker</p>
+        <p>Prescription & Medicine Billing</p>
+    </div>
+
+    <div class="approved">
+        ✅ SALE APPROVED — No Severe Drug Interaction Found
+    </div>
+
+    <div class="patient-info">
+
+        <div class="info-box">
+            <strong>Prescription No:</strong>
+            <span id="billPrescriptionNumber"></span>
+        </div>
+
+        <div class="info-box">
+            <strong>Patient Name:</strong>
+            <span id="billPatientName"></span>
+        </div>
+
+        <div class="info-box">
+            <strong>Age:</strong>
+            <span id="billPatientAge"></span>
+        </div>
+
+        <div class="info-box">
+            <strong>Doctor:</strong>
+            <span id="billDoctorName"></span>
+        </div>
+
+    </div>
+
+    <h3>Medicines</h3>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Medicine</th>
+                <th>Quantity</th>
+                <th>Dosage</th>
+                <th>Unit Price</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+
+        <tbody id="billMedicineTable">
+        </tbody>
+
+    </table>
+
+    <div class="actions">
+
+        <button
+            class="print-button"
+            onclick="window.print()">
+            🖨️ Print Bill
+        </button>
+
+        <button
+            class="back-button"
+            onclick="window.history.back()">
+            ← Back
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+    const storedBill =
+        sessionStorage.getItem("pharmacyBill");
+
+    if (!storedBill) {
+
+        alert("No bill information found.");
+
+        window.location.href = "/prescription";
+
+    } else {
+
+        const billData =
+            JSON.parse(storedBill);
+
+        // Patient information
+
+        document.getElementById(
+            "billPrescriptionNumber"
+        ).textContent =
+            billData.prescriptionNumber || "-";
+
+        document.getElementById(
+            "billPatientName"
+        ).textContent =
+            billData.patientName || "-";
+
+        document.getElementById(
+            "billPatientAge"
+        ).textContent =
+            billData.patientAge || "-";
+
+        document.getElementById(
+            "billDoctorName"
+        ).textContent =
+            billData.doctorName || "-";
+
+
+        // Medicine table
+
+        const table =
+            document.getElementById(
+                "billMedicineTable"
+            );
+
+        const medicineList =
+            Array.isArray(billData.medicines)
+                ? billData.medicines
+                : [];
+
+        let grandTotal = 0;
+
+
+        medicineList.forEach(
+            function (medicine, index) {
+
+                const quantity =
+                    Number(medicine.quantity) || 0;
+
+                const price =
+                    Number(medicine.price) || 0;
+
+                const amount =
+                    quantity * price;
+
+                grandTotal += amount;
+
+
+                const row =
+                    document.createElement("tr");
+
+                row.innerHTML = `
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${medicine.name || "-"}
+                    </td>
+
+                    <td>
+                        ${medicine.quantity || "-"}
+                    </td>
+
+                    <td>
+                        ${medicine.dosage || "-"}
+                    </td>
+
+                    <td>
+                        ₹${price.toFixed(2)}
+                    </td>
+
+                    <td>
+                        ₹${amount.toFixed(2)}
+                    </td>
+
+                `;
+
+                table.appendChild(row);
+
+            }
+        );
+
+
+        // Grand total
+
+        const totalRow =
+            document.createElement("tr");
+
+        totalRow.innerHTML = `
+
+            <td
+                colspan="5"
+                style="
+                    text-align: right;
+                    font-weight: bold;
+                "
+            >
+                Grand Total
+            </td>
+
+            <td
+                style="
+                    font-weight: bold;
+                "
+            >
+                ₹${grandTotal.toFixed(2)}
+            </td>
+
+        `;
+
+        table.appendChild(totalRow);
+
+    }
+
+</script>
+
+</body>
+</html>

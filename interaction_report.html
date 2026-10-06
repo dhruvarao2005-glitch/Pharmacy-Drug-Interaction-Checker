@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pharmacist Interaction Report</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef2f7;
+            color: #1f2937;
+        }
+
+        .report-container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.10);
+        }
+
+        /* HEADER */
+
+        .pharmacy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #1d4ed8;
+            padding-bottom: 20px;
+        }
+
+        .pharmacy-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1d4ed8;
+        }
+
+        .pharmacy-subtitle {
+            margin-top: 5px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .report-title {
+            text-align: right;
+        }
+
+        .report-title h2 {
+            margin: 0;
+            color: #dc2626;
+            font-size: 20px;
+        }
+
+        .report-title p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* WARNING */
+
+        .danger-banner {
+            margin-top: 25px;
+            padding: 18px;
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .danger-banner h2 {
+            margin: 0;
+            color: #b91c1c;
+            font-size: 22px;
+        }
+
+        .danger-banner p {
+            margin: 8px 0 0;
+            color: #7f1d1d;
+            font-weight: bold;
+        }
+
+        /* INFORMATION */
+
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 12px;
+            font-size: 18px;
+            color: #1e3a8a;
+            border-left: 5px solid #2563eb;
+            padding-left: 10px;
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-box {
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px solid #dbe3ec;
+            border-radius: 7px;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        /* INTERACTION CARD */
+
+        .interaction {
+            margin-top: 18px;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fffafa;
+        }
+
+        .interaction-header {
+            background: #dc2626;
+            color: white;
+            padding: 12px 16px;
+            font-weight: bold;
+        }
+
+        .interaction-body {
+            padding: 18px;
+        }
+
+        .interaction-row {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            padding: 9px 0;
+            border-bottom: 1px solid #f1d4d4;
+        }
+
+        .interaction-row:last-child {
+            border-bottom: none;
+        }
+
+        .interaction-label {
+            font-weight: bold;
+            color: #7f1d1d;
+        }
+
+        .severity {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .block-sale {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #111827;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* SIGNATURE */
+
+        .signature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 55px;
+        }
+
+        .signature-box {
+            border-top: 1px solid #94a3b8;
+            padding-top: 8px;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            margin-top: 35px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* BUTTONS */
+
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            margin: 5px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .print-button {
+            background: #2563eb;
+            color: white;
+        }
+
+        .back-button {
+            background: #64748b;
+            color: white;
+        }
+
+        .print-button:hover {
+            background: #1d4ed8;
+        }
+
+        .back-button:hover {
+            background: #475569;
+        }
+
+        /* PRINT */
+
+        @media print {
+
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .report-container {
+                max-width: none;
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .actions {
+                display: none;
+            }
+
+            .danger-banner {
+                break-inside: avoid;
+            }
+
+            .interaction {
+                break-inside: avoid;
+            }
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 650px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .report-container {
+                padding: 20px;
+            }
+
+            .pharmacy-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .report-title {
+                text-align: left;
+            }
+
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+
+            .signature-section {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .interaction-row {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="report-container">
+
+    <!-- PHARMACY HEADER -->
+
+    <div class="pharmacy-header">
+
+        <div>
+
+            <div class="pharmacy-name">
+                💊 PHARMACY CARE
+            </div>
+
+            <div class="pharmacy-subtitle">
+                Pharmacy Drug Interaction Checker
+            </div>
+
+            <div class="pharmacy-subtitle">
+                Drug Safety & Prescription Monitoring
+            </div>
+
+        </div>
+
+        <div class="report-title">
+
+            <h2>PHARMACIST REPORT</h2>
+
+            <p>Drug Interaction Warning</p>
+
+        </div>
+
+    </div>
+
+
+    <!-- WARNING -->
+
+    <div class="danger-banner">
+
+        <h2>
+            🚫 SALE BLOCKED
+        </h2>
+
+        <p>
+            Severe drug interaction detected.
+            Pharmacist review is required.
+        </p>
+
+    </div>
+
+
+    <!-- PATIENT INFORMATION -->
+
+    <div class="section-title">
+        Patient & Prescription Information
+    </div>
+
+    <div class="patient-info">
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Prescription Number
+            </span>
+
+            <span
+                class="info-value"
+                id="prescriptionNumber">
+            </span>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Patient Name
+            </span>
+
+            <span
+                class="info-value"
+                id="patientName">
+            </span>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Patient Age
+            </span>
+
+            <span
+                class="info-value"
+                id="patientAge">
+            </span>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <span class="info-label">
+                Doctor
+            </span>
+
+            <span
+                class="info-value"
+                id="doctorName">
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- INTERACTIONS -->
+
+    <div class="section-title">
+        Detected Drug Interaction(s)
+    </div>
+
+    <div id="interactionList"></div>
+
+
+    <!-- SIGNATURE -->
+
+    <div class="section-title">
+        Pharmacist Verification
+    </div>
+
+    <div class="signature-section">
+
+        <div class="signature-box">
+            Pharmacist Signature
+        </div>
+
+        <div class="signature-box">
+            Date / Time
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        This report is generated by the Pharmacy Drug Interaction Checker.
+        <br>
+        Sale must not proceed until the interaction has been reviewed
+        by an authorized pharmacist.
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="actions">
+
+        <button
+            class="print-button"
+            onclick="window.print()">
+
+            🖨️ Print Warning Report
+
+        </button>
+
+
+        <button
+            class="back-button"
+            onclick="window.history.back()">
+
+            ← Back
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const reportData =
+        JSON.parse(
+            sessionStorage.getItem("interactionReport")
+        );
+
+
+    if (!reportData) {
+
+        alert("No interaction report found.");
+
+        window.location.href =
+            "/prescription";
+
+    } else {
+
+        document.getElementById(
+            "prescriptionNumber"
+        ).textContent =
+            reportData.prescriptionNumber || "-";
+
+
+        document.getElementById(
+            "patientName"
+        ).textContent =
+            reportData.patientName || "-";
+
+
+        document.getElementById(
+            "patientAge"
+        ).textContent =
+            reportData.patientAge || "-";
+
+
+        document.getElementById(
+            "doctorName"
+        ).textContent =
+            reportData.doctorName || "-";
+
+
+        const interactionList =
+            document.getElementById(
+                "interactionList"
+            );
+
+
+        reportData.interactions.forEach(
+            (interaction, index) => {
+
+                const box =
+                    document.createElement("div");
+
+                box.className =
+                    "interaction";
+
+
+                box.innerHTML = `
+
+                    <div class="interaction-header">
+
+                        ⚠️ Interaction ${index + 1}
+
+                    </div>
+
+
+                    <div class="interaction-body">
+
+                        <div class="interaction-row">
+
+                            <div class="interaction-label">
+                                Active Salt 1
+                            </div>
+
+                            <div>
+                                ${interaction.salt_1}
+                            </div>
+
+                        </div>
+
+
+                        <div class="interaction-row">
+
+                            <div class="interaction-label">
+                                Active Salt 2
+                            </div>
+
+                            <div>
+                                ${interaction.salt_2}
+                            </div>
+
+                        </div>
+
+
+                        <div class="interaction-row">
+
+                            <div class="interaction-label">
+                                Severity
+                            </div>
+
+                            <div>
+
+                                <span class="severity">
+                                    ${interaction.severity}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="interaction-row">
+
+                            <div class="interaction-label">
+                                Recommended Action
+                            </div>
+
+                            <div>
+
+                                <span class="block-sale">
+                                    ${interaction.action}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="interaction-row">
+
+                            <div class="interaction-label">
+                                Clinical Message
+                            </div>
+
+                            <div>
+                                ${interaction.message}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+
+                interactionList.appendChild(box);
+
+            }
+        );
+
+    }
+
+</script>
+
+</body>
+
+</html>
